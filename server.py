@@ -4,6 +4,7 @@ import json
 import hashlib
 import urllib.request
 import time
+import requests
 from typing import List, Optional, Dict, Any
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
@@ -137,51 +138,102 @@ def fetch_available_models(api_key: str) -> list:
     except Exception:
         return []
 
-all_openrouter_models = fetch_available_models(OPENROUTER_API_KEY)
+def get_openrouter_api_key() -> str:
+    """Retrieves OpenRouter API key dynamically, cleaning quotes and checking variations."""
+    key = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_ROUTER_KEY") or OPENROUTER_API_KEY or ""
+    return key.strip("'\" \t\r\n")
 
 def execute_llm_call_with_live_status(messages: list, json_mode: bool = False):
-    """Executes LLM call with live status notices and model failover."""
+    """
+    Executes LLM call with rock-solid serverless network resilience,
+    dual requests + openai client failover, and clear diagnostic reporting.
+    """
+    api_key = get_openrouter_api_key()
+    if not api_key:
+        raise HTTPException(
+            status_code=500,
+            detail="OpenRouter API Key is missing. In Vercel Dashboard > Project Settings > Environment Variables, add OPENROUTER_API_KEY, then redeploy."
+        )
+
     primary_chain = [
         "openai/gpt-4o-mini",
         "deepseek/deepseek-chat",
         "meta-llama/llama-3.3-70b-instruct",
         "qwen/qwen-2.5-72b-instruct"
     ]
-    
-    active_pool = [m for m in primary_chain if not all_openrouter_models or m in all_openrouter_models]
-    if not active_pool:
-        active_pool = primary_chain
-        
-    client = OpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=OPENROUTER_API_KEY,
-        timeout=httpx.Timeout(40.0, connect=10.0),
-        max_retries=1,
-        default_headers={"HTTP-Referer": "http://localhost:5173", "X-Title": "TalentBridge"}
-    )
-    
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://talentbridge-ai.vercel.app",
+        "X-Title": "TalentBridge AI"
+    }
+
     last_exception = None
     attempted_models = []
-    
-    for i, model_name in enumerate(active_pool):
+
+    for model_name in primary_chain:
         attempted_models.append(model_name)
+        payload = {
+            "model": model_name,
+            "messages": messages,
+            "temperature": 0.0
+        }
+        if json_mode:
+            payload["response_format"] = {"type": "json_object"}
+
+        # Attempt 1: Direct HTTP via requests (handles serverless IPv4/IPv6 gracefully)
         try:
+            resp = requests.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=(6.0, 30.0)
+            )
+
+            if resp.status_code == 200:
+                data = resp.json()
+                content = data["choices"][0]["message"]["content"]
+                return content, model_name, attempted_models
+            elif resp.status_code == 401:
+                raise Exception("OpenRouter API Key is invalid or expired (HTTP 401 Unauthorized). Please verify OPENROUTER_API_KEY in your Vercel settings.")
+            elif resp.status_code == 402:
+                raise Exception("OpenRouter Account has insufficient credits (HTTP 402 Payment Required). Please check your balance at openrouter.ai/credits.")
+            elif resp.status_code == 429:
+                last_exception = Exception(f"Model {model_name} rate-limited (HTTP 429). Retrying next model in chain...")
+                continue
+            else:
+                last_exception = Exception(f"OpenRouter HTTP {resp.status_code}: {resp.text[:140]}")
+                continue
+
+        except Exception as req_err:
+            last_exception = req_err
+
+        # Attempt 2: Fallback via OpenAI SDK client
+        try:
+            client = OpenAI(
+                base_url="https://openrouter.ai/api/v1",
+                api_key=api_key,
+                timeout=httpx.Timeout(30.0, connect=6.0),
+                max_retries=0,
+                default_headers=headers
+            )
             kwargs = {
                 "model": model_name,
                 "messages": messages,
-                "temperature": 0.0  # Zero temperature for deterministic responses
+                "temperature": 0.0
             }
             if json_mode:
                 kwargs["response_format"] = {"type": "json_object"}
-                
+
             response = client.chat.completions.create(**kwargs)
             return response.choices[0].message.content, model_name, attempted_models
 
-        except Exception as e:
-            last_exception = e
+        except Exception as sdk_err:
+            last_exception = sdk_err
             continue
-            
-    raise last_exception
+
+    raise Exception(f"All models in failover chain failed. Last error: {str(last_exception)}")
 
 def parse_pdf_bytes(file_bytes: bytes) -> str:
     try:
