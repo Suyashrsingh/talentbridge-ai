@@ -1,0 +1,11 @@
+.env
+.env.local
+.venv/
+venv/
+__pycache__/
+*.pyc
+.streamlit/
+.git/
+.github/
+scratch/
+frontend/node_modules/

@@ -1,0 +1,265 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    @apply font-sans antialiased text-[#1E2235];
+    background: linear-gradient(135deg, #F4F6FC 0%, #EEF2FA 50%, #F5F3FF 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Custom Glassy Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(232, 236, 246, 0.5);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(167, 139, 250, 0.5);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(108, 75, 232, 0.8);
+  }
+}
+
+/* ----------------- AMBIENT AURORA LIGHT BLOBS (FOR TRANSPARENT GLASS EFFECT) ----------------- */
+
+.ambient-blob-1 {
+  position: fixed;
+  top: -8%;
+  left: -5%;
+  width: 580px;
+  height: 580px;
+  background: radial-gradient(circle, rgba(108, 75, 232, 0.20) 0%, rgba(139, 92, 246, 0.10) 50%, transparent 70%);
+  filter: blur(85px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: floatBlob1 18s infinite alternate ease-in-out;
+}
+
+.ambient-blob-2 {
+  position: fixed;
+  top: 25%;
+  right: -8%;
+  width: 620px;
+  height: 620px;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.18) 0%, rgba(236, 72, 153, 0.10) 50%, transparent 70%);
+  filter: blur(95px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: floatBlob2 22s infinite alternate ease-in-out;
+}
+
+.ambient-blob-3 {
+  position: fixed;
+  bottom: -10%;
+  left: 20%;
+  width: 650px;
+  height: 650px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.16) 0%, rgba(59, 130, 246, 0.08) 50%, transparent 70%);
+  filter: blur(100px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: floatBlob3 20s infinite alternate ease-in-out;
+}
+
+@keyframes floatBlob1 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(60px, 40px) scale(1.08); }
+  100% { transform: translate(-30px, 80px) scale(0.95); }
+}
+
+@keyframes floatBlob2 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(-70px, -50px) scale(1.1); }
+  100% { transform: translate(40px, 60px) scale(0.92); }
+}
+
+@keyframes floatBlob3 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(-50px, -60px) scale(1.06); }
+  100% { transform: translate(50px, -30px) scale(0.98); }
+}
+
+/* ----------------- ULTRA-GLOSSY TRANSPARENT GLASS CARDS ----------------- */
+
+.glossy-card {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 16px 42px -12px rgba(108, 75, 232, 0.10),
+              0 6px 18px -4px rgba(0, 0, 0, 0.03),
+              inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+  border-radius: 28px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.glossy-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: 28px 28px 0 0;
+  pointer-events: none;
+}
+
+.glossy-card:hover {
+  background: rgba(255, 255, 255, 0.82);
+  transform: translateY(-3px);
+  box-shadow: 0 24px 54px -12px rgba(108, 75, 232, 0.16),
+              0 10px 24px -4px rgba(0, 0, 0, 0.04),
+              inset 0 1.5px 1px 0 rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.95);
+}
+
+.glossy-card-elevated {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-top: 1.5px solid rgba(255, 255, 255, 1);
+  box-shadow: 0 24px 60px -14px rgba(108, 75, 232, 0.13),
+              0 8px 24px -4px rgba(0, 0, 0, 0.035),
+              inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
+  border-radius: 30px;
+  position: relative;
+  z-index: 1;
+}
+
+.glossy-card-elevated::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: 30px 30px 0 0;
+  pointer-events: none;
+}
+
+/* ----------------- GLOSSY BUTTONS & INTERACTIVE PILLS ----------------- */
+
+.glossy-btn {
+  background: linear-gradient(135deg, #6C4BE8 0%, #7E57F7 50%, #906BFF 100%);
+  color: #FFFFFF;
+  border-radius: 9999px;
+  box-shadow: 0 10px 26px -4px rgba(108, 75, 232, 0.46),
+              inset 0 1.5px 1px rgba(255, 255, 255, 0.4);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.glossy-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  transition: 0.6s ease;
+}
+
+.glossy-btn:hover {
+  transform: translateY(-2px) scale(1.008);
+  box-shadow: 0 16px 36px -4px rgba(108, 75, 232, 0.58),
+              inset 0 1.5px 1px rgba(255, 255, 255, 0.6);
+}
+
+.glossy-btn:hover::after {
+  left: 100%;
+}
+
+.glossy-btn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.glossy-btn-outline {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  color: #6C4BE8;
+  border: 1.5px solid rgba(228, 219, 253, 0.9);
+  border-radius: 9999px;
+  box-shadow: 0 4px 14px rgba(108, 75, 232, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  transition: all 0.25s ease;
+}
+
+.glossy-btn-outline:hover {
+  background: rgba(244, 240, 255, 0.95);
+  border-color: #6C4BE8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(108, 75, 232, 0.15);
+}
+
+/* ----------------- GLOSSY INPUTS & TEXTAREAS ----------------- */
+
+.glossy-input {
+  background: rgba(245, 247, 253, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1.5px solid rgba(230, 234, 245, 0.85);
+  border-radius: 22px;
+  color: #1E2235;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s ease;
+}
+
+.glossy-input:focus {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #6C4BE8;
+  box-shadow: 0 0 0 4px rgba(108, 75, 232, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+/* ----------------- GLOSSY PILL BADGE ----------------- */
+
+.glossy-pill {
+  background: rgba(240, 237, 253, 0.85);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(226, 217, 252, 0.8);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.85);
+}
+
+/* Hide scrollbar for segmented tabs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smooth entry animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

@@ -1,0 +1,20 @@
+{
+  "name": "talentbridge-ai",
+  "version": "2.0.0",
+  "private": true,
+  "description": "TalentBridge AI - Intelligent ATS Resume Audit & Career Roadmap Platform",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "dev": "cd frontend && npm run dev",
+    "start": "python server.py"
+  },
+  "keywords": [
+    "ats-resume-checker",
+    "ai-career-agent",
+    "fastapi",
+    "react",
+    "tailwind-css"
+  ],
+  "author": "Suyash Singh & Shubhada Shingane",
+  "license": "MIT"
+}
