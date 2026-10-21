@@ -472,7 +472,10 @@ async def chat_followup(request: ChatRequest):
         raise HTTPException(status_code=500, detail=f"Career Coach Error: {str(e)}")
 
 # Mount built React frontend if dist directory exists
-FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "frontend", "dist")
+FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "dist")
+if not os.path.exists(FRONTEND_DIST):
+    FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "frontend", "dist")
+
 if os.path.exists(FRONTEND_DIST):
     from fastapi.staticfiles import StaticFiles
     from fastapi.responses import FileResponse

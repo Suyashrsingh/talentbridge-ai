@@ -8,4 +8,5 @@ __pycache__/
 .git/
 .github/
 scratch/
-frontend/node_modules/
+node_modules/
+legacy_streamlit_app.py
